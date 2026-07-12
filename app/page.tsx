@@ -71,8 +71,20 @@ export default function CreatePage() {
 
   const copyToClipboard = async () => {
     if (!result) return;
+    const text = getShortUrl(result.slug);
     try {
-      await navigator.clipboard.writeText(getShortUrl(result.slug));
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(text);
+      } else {
+        const textarea = document.createElement('textarea');
+        textarea.value = text;
+        textarea.style.position = 'fixed';
+        textarea.style.opacity = '0';
+        document.body.appendChild(textarea);
+        textarea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textarea);
+      }
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     } catch {
