@@ -7,10 +7,10 @@ function getPool(): Pool {
         const rawUrl = process.env.POSTGRES_URL ?? '';
         const url = new URL(rawUrl);
         url.searchParams.delete('sslmode');
-        const isLocalhost = url.hostname === 'localhost' || url.hostname === '127.0.0.1';
+        const isPrivate = /^(localhost|127\.\d+\.\d+\.\d+|10\.\d+\.\d+\.\d+|172\.(1[6-9]|2\d|3[01])\.\d+\.\d+|192\.168\.\d+\.\d+|::1|fc00:|fe80:)/.test(url.hostname);
         pool = new Pool({
             connectionString: url.toString(),
-            ssl: isLocalhost ? false : { rejectUnauthorized: false },
+            ssl: isPrivate ? false : { rejectUnauthorized: false },
         });
     }
     return pool;
