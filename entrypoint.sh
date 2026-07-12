@@ -35,6 +35,7 @@ if [ -z "$ENCRYPTION_KEY" ]; then
     echo "[FlexURL] Loaded existing encryption key"
   else
     ENCRYPTION_KEY=$(openssl rand -hex 32)
+    export ENCRYPTION_KEY
     echo "$ENCRYPTION_KEY" > "$KEY_FILE"
     chmod 600 "$KEY_FILE"
     echo "[FlexURL] Generated new encryption key"

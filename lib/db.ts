@@ -7,9 +7,10 @@ function getPool(): Pool {
         const rawUrl = process.env.POSTGRES_URL ?? '';
         const url = new URL(rawUrl);
         url.searchParams.delete('sslmode');
+        const isLocalhost = url.hostname === 'localhost' || url.hostname === '127.0.0.1';
         pool = new Pool({
             connectionString: url.toString(),
-            ssl: { rejectUnauthorized: false },
+            ssl: isLocalhost ? false : { rejectUnauthorized: false },
         });
     }
     return pool;
