@@ -47,32 +47,53 @@ fi
 # --- Init PostgreSQL ---
 
 PGDATA="$DATA_DIR/pg"
+PGLOG="$DATA_DIR/pg.log"
 
 # First run: init database
 if [ ! -f "$PGDATA/PG_VERSION" ]; then
   echo "[FlexURL] Initializing PostgreSQL..."
+  rm -rf "$PGDATA"
   mkdir -p "$PGDATA"
   chown -R postgres:postgres "$PGDATA"
   printf '%s\n%s\n' "$DB_PASS" "$DB_PASS" > /tmp/.pwfile
   su-exec postgres initdb -D "$PGDATA" --auth=password --username="$DB_USER" --pwfile=/tmp/.pwfile
   rm -f /tmp/.pwfile
-  # Allow local socket + TCP connections
   echo "local all all trust" > "$PGDATA/pg_hba.conf"
   echo "host all all 127.0.0.1/32 md5" >> "$PGDATA/pg_hba.conf"
   echo "host all all ::1/128 md5" >> "$PGDATA/pg_hba.conf"
+  chown -R postgres:postgres "$PGDATA"
   echo "[FlexURL] PostgreSQL initialized"
 fi
 
-# Start PostgreSQL
-echo "[FlexURL] Starting PostgreSQL..."
+# Ensure permissions
 chown -R postgres:postgres "$PGDATA"
-su-exec postgres pg_ctl -D "$PGDATA" -l "$PGDATA/pg.log" start -w
+touch "$PGLOG" && chown postgres:postgres "$PGLOG"
+
+# Start PostgreSQL in background
+echo "[FlexURL] Starting PostgreSQL..."
+su-exec postgres postgres -D "$PGDATA" -c log_destination=stderr > "$PGLOG" 2>&1 &
+PG_PID=$!
 
 # Wait for PostgreSQL to be ready
 echo "[FlexURL] Waiting for PostgreSQL..."
-until su-exec postgres pg_isready -q 2>/dev/null; do
+for i in $(seq 1 30); do
+  if su-exec postgres pg_isready -q 2>/dev/null; then
+    break
+  fi
+  if ! kill -0 $PG_PID 2>/dev/null; then
+    echo "[FlexURL] PostgreSQL failed to start. Log:"
+    cat "$PGLOG"
+    exit 1
+  fi
   sleep 1
 done
+
+if ! su-exec postgres pg_isready -q 2>/dev/null; then
+  echo "[FlexURL] PostgreSQL did not become ready. Log:"
+  cat "$PGLOG"
+  exit 1
+fi
+
 echo "[FlexURL] PostgreSQL is ready"
 
 # Create user/database if first run
