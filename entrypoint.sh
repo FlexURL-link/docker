@@ -53,11 +53,13 @@ if [ ! -f "$PGDATA/PG_VERSION" ]; then
   echo "[FlexURL] Initializing PostgreSQL..."
   mkdir -p "$PGDATA"
   chown -R postgres:postgres "$PGDATA"
-  su-exec postgres initdb -D "$PGDATA" --auth=password --username="$DB_USER" --pwprompt <<< "$DB_PASS
-$DB_PASS"
-  # Allow local connections with password
+  printf '%s\n%s\n' "$DB_PASS" "$DB_PASS" > /tmp/.pwfile
+  su-exec postgres initdb -D "$PGDATA" --auth=password --username="$DB_USER" --pwfile=/tmp/.pwfile
+  rm -f /tmp/.pwfile
+  # Allow local socket + TCP connections
+  echo "local all all trust" > "$PGDATA/pg_hba.conf"
   echo "host all all 127.0.0.1/32 md5" >> "$PGDATA/pg_hba.conf"
-  echo "local all all trust" >> "$PGDATA/pg_hba.conf"
+  echo "host all all ::1/128 md5" >> "$PGDATA/pg_hba.conf"
   echo "[FlexURL] PostgreSQL initialized"
 fi
 
