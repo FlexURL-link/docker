@@ -65,8 +65,10 @@ if [ ! -f "$PGDATA/PG_VERSION" ]; then
   echo "[FlexURL] PostgreSQL initialized"
 fi
 
-# Ensure permissions
+# Ensure permissions and runtime dir
 chown -R postgres:postgres "$PGDATA"
+mkdir -p /run/postgresql
+chown postgres:postgres /run/postgresql
 touch "$PGLOG" && chown postgres:postgres "$PGLOG"
 
 # Start PostgreSQL in background
