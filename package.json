@@ -1,0 +1,26 @@
+{
+  "name": "flexurl",
+  "version": "1.0.0",
+  "description": "Privacy-first link shortener — self-hosted with Docker",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "nanoid": "^5.1.6",
+    "next": "^16.1.4",
+    "pg": "^8.21.0",
+    "react": "^19.2.3",
+    "react-dom": "^19.2.3"
+  },
+  "devDependencies": {
+    "@types/node": "^25.0.10",
+    "@types/pg": "^8.20.0",
+    "@types/react": "^19.2.9",
+    "@types/react-dom": "^19.2.3",
+    "typescript": "^5.9.3"
+  }
+}
