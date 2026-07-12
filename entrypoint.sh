@@ -66,7 +66,7 @@ fi
 # Start PostgreSQL
 echo "[FlexURL] Starting PostgreSQL..."
 chown -R postgres:postgres "$PGDATA"
-su-exec postgres pg_ctl -D "$PGDATA" -l "$DATA_DIR/pg.log" start -w
+su-exec postgres pg_ctl -D "$PGDATA" -l "$PGDATA/pg.log" start -w
 
 # Wait for PostgreSQL to be ready
 echo "[FlexURL] Waiting for PostgreSQL..."
