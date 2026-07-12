@@ -6,9 +6,6 @@ import { nanoid } from 'nanoid';
 const API_URL = process.env.NEXT_PUBLIC_API_URL || '';
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || '';
 
-const IconShield = () => (
-  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" /></svg>
-);
 const IconCopy = () => (
   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2" /><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" /></svg>
 );
@@ -190,9 +187,6 @@ export default function CreatePage() {
           </form>
         )}
 
-        <div className="card-footer-link">
-          <IconShield /> <strong>FlexURL</strong> — Self-hosted
-        </div>
       </div>
 
       <style jsx>{`
@@ -475,22 +469,6 @@ export default function CreatePage() {
           color: var(--success);
         }
 
-        /* Footer link */
-        .card-footer-link {
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          gap: 0.4rem;
-          margin-top: 1.25rem;
-          font-size: 0.82rem;
-          color: var(--text-faint);
-          transition: color 0.18s ease;
-        }
-
-        .card-footer-link strong {
-          color: var(--brand);
-          font-weight: 700;
-        }
       `}</style>
     </section>
   );
